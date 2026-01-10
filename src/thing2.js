@@ -126,25 +126,28 @@ async function initializeAR() {
     const buffer = await response.arrayBuffer();
     console.log('Downloaded .mind file size:', buffer.byteLength, 'bytes');
     console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-    // Use a Blob URL to ensure we pass the exact bytes to MindAR (avoid any caching/CORS issues)
+    // Convert to data URL to eliminate any extra fetch indirection
     const mindBlob = new Blob([buffer], { type: 'application/octet-stream' });
-    mindBlobUrl = URL.createObjectURL(mindBlob);
-    console.log('Using blob URL for mind file');
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(mindBlob);
+    });
+    mindBlobUrl = dataUrl;
+    console.log('Using data URL for mind file');
     
-    // Intercept fetch calls to the blob URL and log the size MindAR receives
+    // Log any fetch sizes (if MindAR fetches again)
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       const res = await originalFetch(...args);
-      const url = args[0] instanceof Request ? args[0].url : args[0];
-      if (url && url.startsWith('blob:')) {
-        try {
-          const clone = res.clone();
-          const buf = await clone.arrayBuffer();
-          console.log('MindAR fetch .mind size:', buf.byteLength, 'bytes', 'url:', url);
-          return new Response(buf, { status: res.status, statusText: res.statusText, headers: res.headers });
-        } catch (err) {
-          console.warn('MindAR fetch intercept failed:', err);
-        }
+      try {
+        const clone = res.clone();
+        const buf = await clone.arrayBuffer();
+        const url = args[0] instanceof Request ? args[0].url : args[0];
+        console.log('Fetch size:', buf.byteLength, 'bytes', 'url:', url);
+      } catch (err) {
+        // ignore
       }
       return res;
     };
