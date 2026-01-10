@@ -155,14 +155,18 @@ async function initializeAR() {
     console.error('Failed to fetch .mind file:', e);
   }
   
-  // Update the mindar-image attribute with the targets URL
-  arSceneEl.setAttribute('mindar-image', {
-    imageTargetSrc: mindBlobUrl,
-    autoStart: false,
-    uiScanning: 'no',
-    uiLoading: 'no',
-  });
-  console.log('Set mindar-image attribute (object form)');
+  // Update the mindar-image component and system directly to ensure the new source is used
+  arSceneEl.setAttribute('mindar-image', `imageTargetSrc: ${mindBlobUrl}; autoStart: false; uiScanning: no; uiLoading: no;`);
+  const mindarComp = arSceneEl.components['mindar-image'];
+  if (mindarComp) {
+    mindarComp.data.imageTargetSrc = mindBlobUrl;
+  }
+  const mindarSystem = arSceneEl.systems['mindar-image-system'];
+  if (mindarSystem) {
+    mindarSystem.imageTargetSrc = mindBlobUrl;
+    console.log('Updated mindar system imageTargetSrc:', mindarSystem.imageTargetSrc);
+  }
+  console.log('Set mindar-image attribute + system override');
   
   // Create video assets and target entities
   targets.forEach((target, index) => {
