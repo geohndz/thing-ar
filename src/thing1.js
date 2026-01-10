@@ -62,15 +62,11 @@ async function init() {
   const urlParams = new URLSearchParams(window.location.search);
   const projectId = urlParams.get('p');
   
+  // Only load project if explicitly in URL - always start fresh otherwise
   if (projectId) {
     await loadProject(projectId);
-  } else {
-    // Check localStorage for last project
-    const lastProjectId = localStorage.getItem('thing1_last_project');
-    if (lastProjectId) {
-      await loadProject(lastProjectId);
-    }
   }
+  // If no project ID, start with empty form (fresh project)
   
   setupEventListeners();
   updateUI();
