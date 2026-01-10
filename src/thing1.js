@@ -416,10 +416,22 @@ async function compileTargets() {
     
     // Export to buffer
     const exportedBuffer = await compiler.exportData();
+    console.log('Exported buffer:', exportedBuffer);
+    console.log('Buffer type:', typeof exportedBuffer);
+    console.log('Buffer constructor:', exportedBuffer?.constructor?.name);
+    console.log('Buffer byteLength:', exportedBuffer?.byteLength);
+    
+    // Ensure it's an ArrayBuffer
+    let bufferToUpload = exportedBuffer;
+    if (exportedBuffer instanceof Uint8Array) {
+      bufferToUpload = exportedBuffer.buffer;
+      console.log('Converted Uint8Array to ArrayBuffer');
+    }
     
     // Upload to Firebase
     compileStatus.textContent = 'Uploading...';
-    const { url: mindUrl } = await uploadTargetsMind(currentProject.id, exportedBuffer);
+    const { url: mindUrl } = await uploadTargetsMind(currentProject.id, bufferToUpload);
+    console.log('Uploaded to:', mindUrl);
     
     // Update project
     await updateProject(currentProject.id, {

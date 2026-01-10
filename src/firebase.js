@@ -169,10 +169,14 @@ export async function uploadTargetsMind(projectId, mindBuffer) {
   const path = `projects/${projectId}/targets.mind`;
   const storageRef = ref(storage, path);
   
-  const blob = new Blob([mindBuffer], { type: 'application/octet-stream' });
-  await uploadBytes(storageRef, blob);
+  console.log('uploadTargetsMind - buffer type:', mindBuffer?.constructor?.name);
+  console.log('uploadTargetsMind - buffer byteLength:', mindBuffer?.byteLength || mindBuffer?.length);
+  
+  // Upload directly - Firebase Storage accepts Uint8Array, ArrayBuffer, or Blob
+  await uploadBytes(storageRef, mindBuffer);
   const url = await getDownloadURL(storageRef);
   
+  console.log('uploadTargetsMind - uploaded successfully');
   return { path, url };
 }
 
