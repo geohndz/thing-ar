@@ -45,27 +45,27 @@ async function init() {
       return;
     }
     
-    loadingText.textContent = 'FETCHING_PROJECT_MANIFEST...';
+    loadingText.textContent = 'Looking for your project...';
     
     // Load project data
     project = await getProject(projectId);
     
     if (!project) {
-      showError('PROJECT_NOT_FOUND');
+      showError('Project not found');
       return;
     }
     
     if (!project.compiled || !project.mindUrl) {
-      showError('MANIFEST_INCOMPLETE // ASSETS_NOT_COMPILED');
+      showError('Project not ready for Thing 2 yet');
       return;
     }
     
     // Load targets
-    loadingText.textContent = 'CACHING_TARGET_DATA...';
+    loadingText.textContent = 'Loading some cool posters...';
     targets = await getTargets(projectId);
     
     if (targets.length === 0) {
-      showError('MANIFEST_EMPTY // NO_TARGET_ASSETS');
+      showError('No targets found in project');
       return;
     }
     
@@ -73,7 +73,7 @@ async function init() {
     setupSocialLinks();
     
     // Initialize AR
-    loadingText.textContent = 'INITIALIZING_AR_ENGINE...';
+    loadingText.textContent = 'Starting the AR engine...';
     await initializeAR();
     
   } catch (error) {
@@ -285,7 +285,7 @@ function addScanningIndicator() {
   indicator.className = 'scanning-indicator visible';
   indicator.innerHTML = `
     <div class="scanning-dot"></div>
-    <span>SCANNING_FOR_POSTERS</span>
+    <span>Looking for posters...</span>
   `;
   document.body.appendChild(indicator);
 }
@@ -302,7 +302,7 @@ function showTargetFound() {
   if (!indicator) {
     indicator = document.createElement('div');
     indicator.className = 'target-found';
-    indicator.textContent = 'TARGET_ACQUIRED';
+    indicator.textContent = 'Poster Found!';
     document.body.appendChild(indicator);
   }
   indicator.classList.add('visible');

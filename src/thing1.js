@@ -385,7 +385,7 @@ async function compileTargets() {
     // Load all poster images from local files (no CORS issues!)
     const images = await Promise.all(
       targets.map(async (target, i) => {
-        const status = `LOADING_IMG_${i + 1}/${targets.length}`;
+        const status = `Loading unit ${i + 1}/${targets.length}`;
         compileStatus.textContent = status;
         const progress = ((i + 1) / targets.length) * 30;
         compileProgress.style.width = `${progress}%`;
@@ -396,7 +396,7 @@ async function compileTargets() {
       })
     );
     
-    compileStatus.textContent = 'COMPILING_DATA...';
+    compileStatus.textContent = 'Preparing targets...';
     compileProgress.style.width = '40%';
     if (compilePercent) compilePercent.textContent = '40%';
     
@@ -410,21 +410,19 @@ async function compileTargets() {
       const percent = 40 + (normalizedProgress * 50);
       compileProgress.style.width = `${Math.min(percent, 95)}%`;
       if (compilePercent) compilePercent.textContent = `${Math.round(Math.min(percent, 95))}%`;
-      compileStatus.textContent = `PROCESS_${Math.round(Math.min(progress, 100))}%`;
+      compileStatus.textContent = `Compiling... ${Math.round(Math.min(progress, 100))}%`;
     });
     
-    compileStatus.textContent = 'EXPORTING_BLOB...';
+    compileStatus.textContent = 'Finalizing...';
     compileProgress.style.width = '95%';
     if (compilePercent) compilePercent.textContent = '95%';
     
     // Export to buffer (use the compiled dataList to avoid stale internal state)
     const exportedBuffer = await compiler.exportData(dataList);
-    console.log('Exported buffer size:', exportedBuffer?.byteLength || exportedBuffer?.length, 'bytes');
     
-    // Upload to Firebase (Uint8Array is supported directly)
-    compileStatus.textContent = 'UPLOADING_SYSTEM...';
+    // Upload to Firebase
+    compileStatus.textContent = 'Sending to Thing 2...';
     const { url: mindUrl } = await uploadTargetsMind(currentProject.id, exportedBuffer);
-    console.log('Uploaded to:', mindUrl);
     
     // Update project
     await updateProject(currentProject.id, {
@@ -438,12 +436,12 @@ async function compileTargets() {
     
     compileProgress.style.width = '100%';
     if (compilePercent) compilePercent.textContent = '100%';
-    compileStatus.textContent = 'COMPLETE';
+    compileStatus.textContent = 'Ready!';
     
     setTimeout(() => {
       compileModal.classList.add('hidden');
       updateUI();
-      showToast('SYSTEM_UPDATE_SUCCESS', 'success');
+      showToast('Project updated successfully', 'success');
     }, 500);
     
   } catch (error) {
@@ -459,19 +457,19 @@ async function compileTargets() {
 
 function updateUI() {
   // Update poster count
-  posterCount.textContent = `${targets.length} UNIT${targets.length !== 1 ? 'S' : ''}`;
+  posterCount.textContent = `${targets.length} Unit${targets.length !== 1 ? 's' : ''}`;
   
   // Update status
   if (isCompiled) {
     statusDot.classList.add('compiled');
     statusDot.classList.remove('compiling');
-    statusText.textContent = `STATE: READY (${targets.length} TARGETS)`;
+    statusText.textContent = `Ready for Thing 2 (${targets.length} Targets)`;
   } else if (targets.length > 0) {
     statusDot.classList.remove('compiled', 'compiling');
-    statusText.textContent = 'STATE: PENDING_COMPILATION';
+    statusText.textContent = 'Wait! Compilation needed';
   } else {
     statusDot.classList.remove('compiled', 'compiling');
-    statusText.textContent = 'STATE: NO_DATA';
+    statusText.textContent = 'No data added yet';
   }
   
   // Update share URL
