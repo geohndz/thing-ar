@@ -119,18 +119,23 @@ async function initializeAR() {
   console.log('Targets:', targets);
   
   // DEBUG: Fetch the .mind file manually to check its size
+  let mindBlobUrl = project.mindUrl;
   try {
     console.log('Fetching .mind file to verify...');
     const response = await fetch(project.mindUrl);
     const buffer = await response.arrayBuffer();
     console.log('Downloaded .mind file size:', buffer.byteLength, 'bytes');
     console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    // Use a Blob URL to ensure we pass the exact bytes to MindAR (avoid any caching/CORS issues)
+    const mindBlob = new Blob([buffer], { type: 'application/octet-stream' });
+    mindBlobUrl = URL.createObjectURL(mindBlob);
+    console.log('Using blob URL for mind file');
   } catch (e) {
     console.error('Failed to fetch .mind file:', e);
   }
   
   // Update the mindar-image attribute with the targets URL
-  arSceneEl.setAttribute('mindar-image', `imageTargetSrc: ${project.mindUrl}; autoStart: false; uiScanning: no; uiLoading: no;`);
+  arSceneEl.setAttribute('mindar-image', `imageTargetSrc: ${mindBlobUrl}; autoStart: false; uiScanning: no; uiLoading: no;`);
   console.log('Set mindar-image attribute');
   
   // Create video assets and target entities
