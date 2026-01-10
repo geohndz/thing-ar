@@ -114,8 +114,13 @@ function setupSocialLinks() {
 // ============================================
 
 async function initializeAR() {
+  console.log('initializeAR called');
+  console.log('Project mindUrl:', project.mindUrl);
+  console.log('Targets:', targets);
+  
   // Update the mindar-image attribute with the targets URL
   arSceneEl.setAttribute('mindar-image', `imageTargetSrc: ${project.mindUrl}; autoStart: false; uiScanning: no; uiLoading: no;`);
+  console.log('Set mindar-image attribute');
   
   // Create video assets and target entities
   targets.forEach((target, index) => {
@@ -175,13 +180,25 @@ async function initializeAR() {
   // Wait for scene to be ready
   loadingText.textContent = 'Requesting camera access...';
   
-  arSceneEl.addEventListener('loaded', async () => {
+  console.log('Scene hasLoaded:', arSceneEl.hasLoaded);
+  
+  const startAR = async () => {
+    console.log('Starting AR...');
     try {
       // Get MindAR system
       arSystem = arSceneEl.systems['mindar-image-system'];
+      console.log('MindAR system:', arSystem);
+      
+      if (!arSystem) {
+        console.error('MindAR system not found!');
+        showError('AR system failed to initialize. Please refresh.');
+        return;
+      }
       
       // Start AR
+      console.log('Calling arSystem.start()...');
       await arSystem.start();
+      console.log('AR started successfully!');
       
       // Hide loading screen
       loadingScreen.classList.add('hidden');
@@ -194,10 +211,18 @@ async function initializeAR() {
       if (error.name === 'NotAllowedError') {
         showError('Camera access denied. Please allow camera access and refresh.');
       } else {
-        showError('Failed to start AR. Make sure camera is available.');
+        showError('Failed to start AR: ' + error.message);
       }
     }
-  });
+  };
+  
+  if (arSceneEl.hasLoaded) {
+    console.log('Scene already loaded, starting AR immediately');
+    await startAR();
+  } else {
+    console.log('Waiting for scene to load...');
+    arSceneEl.addEventListener('loaded', startAR);
+  }
   
   arSceneEl.addEventListener('arError', (event) => {
     console.error('AR Error:', event);
