@@ -149,12 +149,22 @@ async function handlePosterUpload(event) {
   
   // Ensure project exists
   if (!currentProject) {
-    await createNewProject();
+    console.log('No current project, creating new one...');
+    try {
+      await createNewProject();
+      console.log('Project created:', currentProject);
+    } catch (e) {
+      console.error('Failed to create project:', e);
+      showToast('Failed to create project: ' + e.message, 'error');
+      return;
+    }
   }
   
   const targetIndex = targets.length;
+  console.log('Target index:', targetIndex);
   
   try {
+    console.log('Starting upload...');
     showToast('Uploading poster...', 'info');
     
     // Store file locally for compilation
@@ -394,9 +404,11 @@ async function compileTargets() {
     
     // Compile with progress callback
     await compiler.compileImageTargets(images, (progress) => {
-      const percent = 40 + (progress * 50);
-      compileProgress.style.width = `${percent}%`;
-      compileStatus.textContent = `Compiling... ${Math.round(progress * 100)}%`;
+      // progress comes as 0-100, not 0-1
+      const normalizedProgress = progress > 1 ? progress / 100 : progress;
+      const percent = 40 + (normalizedProgress * 50);
+      compileProgress.style.width = `${Math.min(percent, 95)}%`;
+      compileStatus.textContent = `Compiling... ${Math.round(Math.min(progress, 100))}%`;
     });
     
     compileStatus.textContent = 'Exporting...';
