@@ -6,14 +6,17 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "vercel-build": "npm install --ignore-scripts && vite build"
   },
   "devDependencies": {
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "@google-cloud/storage": "^7.18.0",
     "firebase": "^12.7.0",
     "mind-ar": "^1.2.5"
+  },
+  "overrides": {
+    "canvas": "npm:empty-npm-package@1.0.0"
   }
 }
