@@ -118,6 +118,17 @@ async function initializeAR() {
   console.log('Project mindUrl:', project.mindUrl);
   console.log('Targets:', targets);
   
+  // DEBUG: Fetch the .mind file manually to check its size
+  try {
+    console.log('Fetching .mind file to verify...');
+    const response = await fetch(project.mindUrl);
+    const buffer = await response.arrayBuffer();
+    console.log('Downloaded .mind file size:', buffer.byteLength, 'bytes');
+    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+  } catch (e) {
+    console.error('Failed to fetch .mind file:', e);
+  }
+  
   // Update the mindar-image attribute with the targets URL
   arSceneEl.setAttribute('mindar-image', `imageTargetSrc: ${project.mindUrl}; autoStart: false; uiScanning: no; uiLoading: no;`);
   console.log('Set mindar-image attribute');
@@ -318,4 +329,5 @@ retryBtn.addEventListener('click', () => {
 // ============================================
 
 init();
+
 
