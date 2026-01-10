@@ -40,9 +40,7 @@ const postersGrid = document.getElementById('posters-grid');
 const addPosterBtn = document.getElementById('add-poster-btn');
 const posterInput = document.getElementById('poster-input');
 const videoInput = document.getElementById('video-input');
-const mindInput = document.getElementById('mind-input');
 const compileBtn = document.getElementById('compile-btn');
-const uploadMindBtn = document.getElementById('upload-mind-btn');
 const saveBtn = document.getElementById('save-btn');
 const statusDot = document.getElementById('status-dot');
 const statusText = document.getElementById('status-text');
@@ -54,7 +52,6 @@ const compileModal = document.getElementById('compile-modal');
 const compileProgress = document.getElementById('compile-progress');
 const compileStatus = document.getElementById('compile-status');
 const toastContainer = document.getElementById('toast-container');
-const downloadPostersBtn = document.getElementById('download-posters-btn');
 
 // ============================================
 // Initialize
@@ -124,19 +121,8 @@ function setupEventListeners() {
   // Video file selected
   videoInput.addEventListener('change', handleVideoUpload);
   
-  // Mind file upload button
-  uploadMindBtn.addEventListener('click', () => {
-    mindInput.click();
-  });
-  
-  // Mind file selected
-  mindInput.addEventListener('change', handleMindUpload);
-  
   // Compile button
   compileBtn.addEventListener('click', compileTargets);
-  
-  // Download posters button
-  downloadPostersBtn.addEventListener('click', downloadPosters);
   
   // Save button
   saveBtn.addEventListener('click', saveProject);
@@ -153,8 +139,13 @@ function setupEventListeners() {
 // ============================================
 
 async function handlePosterUpload(event) {
+  console.log('handlePosterUpload called', event);
   const file = event.target.files[0];
-  if (!file) return;
+  console.log('Selected file:', file);
+  if (!file) {
+    console.log('No file selected');
+    return;
+  }
   
   // Ensure project exists
   if (!currentProject) {
@@ -262,50 +253,6 @@ async function handleVideoUpload(event) {
   // Reset
   videoInput.value = '';
   currentTargetIndex = null;
-}
-
-async function handleMindUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  
-  // Ensure project exists
-  if (!currentProject) {
-    await createNewProject();
-  }
-  
-  if (targets.length === 0) {
-    showToast('Add at least one poster first', 'error');
-    mindInput.value = '';
-    return;
-  }
-  
-  try {
-    showToast('Uploading .mind file...', 'info');
-    
-    // Read file as ArrayBuffer
-    const buffer = await file.arrayBuffer();
-    
-    // Upload to Firebase
-    const { url: mindUrl } = await uploadTargetsMind(currentProject.id, buffer);
-    
-    // Update project
-    await updateProject(currentProject.id, {
-      compiled: true,
-      targetCount: targets.length,
-      mindUrl
-    });
-    
-    currentProject.mindUrl = mindUrl;
-    isCompiled = true;
-    
-    updateUI();
-    showToast('Targets file uploaded successfully!', 'success');
-  } catch (error) {
-    console.error('Upload error:', error);
-    showToast('Failed to upload .mind file: ' + error.message, 'error');
-  }
-  
-  mindInput.value = '';
 }
 
 async function removePoster(targetIndex) {
@@ -597,42 +544,6 @@ function createPosterCard(target) {
 // ============================================
 // Utilities
 // ============================================
-
-async function downloadPosters() {
-  if (targets.length === 0) {
-    showToast('No posters to download', 'error');
-    return;
-  }
-  
-  showToast('Preparing download...', 'info');
-  
-  // Download each poster
-  for (let i = 0; i < targets.length; i++) {
-    const target = targets[i];
-    try {
-      // If we have the local file, use that
-      if (posterFiles.has(target.targetIndex)) {
-        const file = posterFiles.get(target.targetIndex);
-        const url = URL.createObjectURL(file);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `poster-${i + 1}-${target.posterFilename || 'image.png'}`;
-        a.click();
-        URL.revokeObjectURL(url);
-      } else if (target.posterUrl) {
-        // Open in new tab (can't download cross-origin directly)
-        window.open(target.posterUrl, '_blank');
-      }
-      
-      // Small delay between downloads
-      await new Promise(r => setTimeout(r, 300));
-    } catch (e) {
-      console.error('Download error:', e);
-    }
-  }
-  
-  showToast(`${targets.length} poster(s) ready. Upload them in the same order to the compiler.`, 'success');
-}
 
 function copyShareUrl() {
   if (!shareUrl.value) {
