@@ -13,6 +13,9 @@ import {
   deleteFile
 } from './firebase.js';
 
+// Import MindAR Compiler from npm package
+import { Compiler } from 'mind-ar/src/image-target/compiler.js';
+
 // ============================================
 // State
 // ============================================
@@ -21,6 +24,9 @@ let currentProject = null;
 let targets = [];
 let currentTargetIndex = null; // For video upload
 let isCompiled = false;
+
+// Store original poster files for compilation (avoids CORS issues)
+const posterFiles = new Map();
 
 // ============================================
 // DOM Elements
@@ -34,7 +40,9 @@ const postersGrid = document.getElementById('posters-grid');
 const addPosterBtn = document.getElementById('add-poster-btn');
 const posterInput = document.getElementById('poster-input');
 const videoInput = document.getElementById('video-input');
+const mindInput = document.getElementById('mind-input');
 const compileBtn = document.getElementById('compile-btn');
+const uploadMindBtn = document.getElementById('upload-mind-btn');
 const saveBtn = document.getElementById('save-btn');
 const statusDot = document.getElementById('status-dot');
 const statusText = document.getElementById('status-text');
@@ -46,6 +54,7 @@ const compileModal = document.getElementById('compile-modal');
 const compileProgress = document.getElementById('compile-progress');
 const compileStatus = document.getElementById('compile-status');
 const toastContainer = document.getElementById('toast-container');
+const downloadPostersBtn = document.getElementById('download-posters-btn');
 
 // ============================================
 // Initialize
@@ -88,6 +97,9 @@ async function loadProject(projectId) {
       window.history.replaceState({}, '', `?p=${projectId}`);
       localStorage.setItem('thing1_last_project', projectId);
       
+      // Clear local poster files (they need to be re-added if user wants to recompile)
+      posterFiles.clear();
+      
       showToast('Project loaded', 'success');
     }
   } catch (error) {
@@ -112,8 +124,19 @@ function setupEventListeners() {
   // Video file selected
   videoInput.addEventListener('change', handleVideoUpload);
   
+  // Mind file upload button
+  uploadMindBtn.addEventListener('click', () => {
+    mindInput.click();
+  });
+  
+  // Mind file selected
+  mindInput.addEventListener('change', handleMindUpload);
+  
   // Compile button
   compileBtn.addEventListener('click', compileTargets);
+  
+  // Download posters button
+  downloadPostersBtn.addEventListener('click', downloadPosters);
   
   // Save button
   saveBtn.addEventListener('click', saveProject);
@@ -142,6 +165,9 @@ async function handlePosterUpload(event) {
   
   try {
     showToast('Uploading poster...', 'info');
+    
+    // Store file locally for compilation
+    posterFiles.set(targetIndex, file);
     
     // Upload poster image
     const { url: posterUrl, path: posterPath } = await uploadPoster(
@@ -238,6 +264,50 @@ async function handleVideoUpload(event) {
   currentTargetIndex = null;
 }
 
+async function handleMindUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  // Ensure project exists
+  if (!currentProject) {
+    await createNewProject();
+  }
+  
+  if (targets.length === 0) {
+    showToast('Add at least one poster first', 'error');
+    mindInput.value = '';
+    return;
+  }
+  
+  try {
+    showToast('Uploading .mind file...', 'info');
+    
+    // Read file as ArrayBuffer
+    const buffer = await file.arrayBuffer();
+    
+    // Upload to Firebase
+    const { url: mindUrl } = await uploadTargetsMind(currentProject.id, buffer);
+    
+    // Update project
+    await updateProject(currentProject.id, {
+      compiled: true,
+      targetCount: targets.length,
+      mindUrl
+    });
+    
+    currentProject.mindUrl = mindUrl;
+    isCompiled = true;
+    
+    updateUI();
+    showToast('Targets file uploaded successfully!', 'success');
+  } catch (error) {
+    console.error('Upload error:', error);
+    showToast('Failed to upload .mind file: ' + error.message, 'error');
+  }
+  
+  mindInput.value = '';
+}
+
 async function removePoster(targetIndex) {
   const target = targets.find(t => t.targetIndex === targetIndex);
   if (!target) return;
@@ -258,11 +328,19 @@ async function removePoster(targetIndex) {
     
     // Remove from local state
     targets = targets.filter(t => t.id !== target.id);
+    posterFiles.delete(targetIndex);
     
     // Re-index remaining targets
+    const newPosterFiles = new Map();
     targets.forEach((t, i) => {
+      const oldIndex = t.targetIndex;
       t.targetIndex = i;
+      if (posterFiles.has(oldIndex)) {
+        newPosterFiles.set(i, posterFiles.get(oldIndex));
+      }
     });
+    posterFiles.clear();
+    newPosterFiles.forEach((v, k) => posterFiles.set(k, v));
     
     // Mark as not compiled
     isCompiled = false;
@@ -337,21 +415,27 @@ async function compileTargets() {
     return;
   }
   
+  // Check if we have all poster files locally
+  const missingFiles = targets.filter(t => !posterFiles.has(t.targetIndex));
+  if (missingFiles.length > 0) {
+    showToast(`Please re-upload ${missingFiles.length} poster(s) to compile. Local files were cleared on page reload.`, 'error');
+    return;
+  }
+  
   // Show modal
   compileModal.classList.remove('hidden');
   compileProgress.style.width = '0%';
   compileStatus.textContent = 'Preparing images...';
   
   try {
-    // Load all poster images
+    // Load all poster images from local files (no CORS issues!)
     const images = await Promise.all(
       targets.map(async (target, i) => {
         compileStatus.textContent = `Loading image ${i + 1}/${targets.length}...`;
         compileProgress.style.width = `${((i + 1) / targets.length) * 30}%`;
         
-        const response = await fetch(target.posterUrl);
-        const blob = await response.blob();
-        return createImageBitmap(blob);
+        const file = posterFiles.get(target.targetIndex);
+        return createImageBitmap(file);
       })
     );
     
@@ -359,10 +443,10 @@ async function compileTargets() {
     compileProgress.style.width = '40%';
     
     // Use MindAR compiler
-    const compiler = new window.MINDAR.IMAGE.Compiler();
+    const compiler = new Compiler();
     
     // Compile with progress callback
-    const dataList = await compiler.compileImageTargets(images, (progress) => {
+    await compiler.compileImageTargets(images, (progress) => {
       const percent = 40 + (progress * 50);
       compileProgress.style.width = `${percent}%`;
       compileStatus.textContent = `Compiling... ${Math.round(progress * 100)}%`;
@@ -400,7 +484,7 @@ async function compileTargets() {
   } catch (error) {
     console.error('Compilation error:', error);
     compileModal.classList.add('hidden');
-    showToast('Compilation failed: ' + error.message, 'error');
+    showToast('Auto-compile failed. Please use the online compiler and upload the .mind file.', 'error');
   }
 }
 
@@ -456,11 +540,18 @@ function createPosterCard(target) {
   card.dataset.index = target.targetIndex;
   
   const hasVideo = !!target.videoUrl;
+  const hasLocalFile = posterFiles.has(target.targetIndex);
+  
+  // Use local file URL if available, otherwise use Firebase URL
+  const imageUrl = hasLocalFile 
+    ? URL.createObjectURL(posterFiles.get(target.targetIndex))
+    : target.posterUrl;
   
   card.innerHTML = `
     <div class="poster-preview">
-      <img src="${target.posterUrl}" alt="Poster ${target.targetIndex + 1}" />
+      <img src="${imageUrl}" alt="Poster ${target.targetIndex + 1}" />
       <span class="poster-index">${target.targetIndex + 1}</span>
+      ${!hasLocalFile ? '<span class="poster-warning" title="Re-upload to compile">⚠️</span>' : ''}
       <button class="poster-delete" title="Delete poster">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -506,6 +597,42 @@ function createPosterCard(target) {
 // ============================================
 // Utilities
 // ============================================
+
+async function downloadPosters() {
+  if (targets.length === 0) {
+    showToast('No posters to download', 'error');
+    return;
+  }
+  
+  showToast('Preparing download...', 'info');
+  
+  // Download each poster
+  for (let i = 0; i < targets.length; i++) {
+    const target = targets[i];
+    try {
+      // If we have the local file, use that
+      if (posterFiles.has(target.targetIndex)) {
+        const file = posterFiles.get(target.targetIndex);
+        const url = URL.createObjectURL(file);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `poster-${i + 1}-${target.posterFilename || 'image.png'}`;
+        a.click();
+        URL.revokeObjectURL(url);
+      } else if (target.posterUrl) {
+        // Open in new tab (can't download cross-origin directly)
+        window.open(target.posterUrl, '_blank');
+      }
+      
+      // Small delay between downloads
+      await new Promise(r => setTimeout(r, 300));
+    } catch (e) {
+      console.error('Download error:', e);
+    }
+  }
+  
+  showToast(`${targets.length} poster(s) ready. Upload them in the same order to the compiler.`, 'success');
+}
 
 function copyShareUrl() {
   if (!shareUrl.value) {
@@ -555,4 +682,3 @@ function showToast(message, type = 'info') {
 // ============================================
 
 init();
-

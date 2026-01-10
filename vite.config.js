@@ -13,5 +13,11 @@ export default defineConfig({
   server: {
     host: true,
   },
+  optimizeDeps: {
+    // Exclude mind-ar from pre-bundling so Vite handles the worker imports correctly
+    exclude: ['mind-ar'],
+  },
+  worker: {
+    format: 'es',
+  },
 });
-

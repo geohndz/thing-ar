@@ -12,6 +12,8 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "firebase": "^12.7.0"
+    "@google-cloud/storage": "^7.18.0",
+    "firebase": "^12.7.0",
+    "mind-ar": "^1.2.5"
   }
 }
