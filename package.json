@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "vercel-build": "npm install --ignore-scripts && vite build"
+    "preview": "vite preview"
   },
   "devDependencies": {
     "vite": "^7.2.4"
@@ -17,6 +16,6 @@
     "mind-ar": "^1.2.5"
   },
   "overrides": {
-    "canvas": "npm:empty-npm-package@1.0.0"
+    "canvas": "npm:canvas-mock@0.0.0"
   }
 }
