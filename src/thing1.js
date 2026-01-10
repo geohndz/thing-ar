@@ -385,7 +385,7 @@ async function compileTargets() {
     // Load all poster images from local files (no CORS issues!)
     const images = await Promise.all(
       targets.map(async (target, i) => {
-        const status = `Loading unit ${i + 1}/${targets.length}`;
+        const status = `Loading image ${i + 1}/${targets.length}`;
         compileStatus.textContent = status;
         const progress = ((i + 1) / targets.length) * 30;
         compileProgress.style.width = `${progress}%`;
@@ -396,7 +396,7 @@ async function compileTargets() {
       })
     );
     
-    compileStatus.textContent = 'Preparing targets...';
+    compileStatus.textContent = 'Analyzing images...';
     compileProgress.style.width = '40%';
     if (compilePercent) compilePercent.textContent = '40%';
     
@@ -413,7 +413,7 @@ async function compileTargets() {
       compileStatus.textContent = `Compiling... ${Math.round(Math.min(progress, 100))}%`;
     });
     
-    compileStatus.textContent = 'Finalizing...';
+    compileStatus.textContent = 'Finishing up...';
     compileProgress.style.width = '95%';
     if (compilePercent) compilePercent.textContent = '95%';
     
@@ -421,7 +421,7 @@ async function compileTargets() {
     const exportedBuffer = await compiler.exportData(dataList);
     
     // Upload to Firebase
-    compileStatus.textContent = 'Sending to Thing 2...';
+    compileStatus.textContent = 'Saving targets...';
     const { url: mindUrl } = await uploadTargetsMind(currentProject.id, exportedBuffer);
     
     // Update project
@@ -436,7 +436,7 @@ async function compileTargets() {
     
     compileProgress.style.width = '100%';
     if (compilePercent) compilePercent.textContent = '100%';
-    compileStatus.textContent = 'Ready!';
+    compileStatus.textContent = 'Ready';
     
     setTimeout(() => {
       compileModal.classList.add('hidden');
@@ -457,19 +457,19 @@ async function compileTargets() {
 
 function updateUI() {
   // Update poster count
-  posterCount.textContent = `${targets.length} Unit${targets.length !== 1 ? 's' : ''}`;
+  posterCount.textContent = `${targets.length} poster${targets.length !== 1 ? 's' : ''}`;
   
   // Update status
   if (isCompiled) {
     statusDot.classList.add('compiled');
     statusDot.classList.remove('compiling');
-    statusText.textContent = `Ready for Thing 2 (${targets.length} Targets)`;
+    statusText.textContent = `Ready (${targets.length} Targets)`;
   } else if (targets.length > 0) {
     statusDot.classList.remove('compiled', 'compiling');
-    statusText.textContent = 'Wait! Compilation needed';
+    statusText.textContent = 'Changes pending compilation';
   } else {
     statusDot.classList.remove('compiled', 'compiling');
-    statusText.textContent = 'No data added yet';
+    statusText.textContent = 'No posters added';
   }
   
   // Update share URL
