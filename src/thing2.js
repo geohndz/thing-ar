@@ -1,5 +1,5 @@
 // AR Viewer
-import { defineCustomElements } from '@ionic/core/loader';
+import { defineCustomElements } from '@ionic/core/loader/index.js';
 import { loadingController, alertController } from '@ionic/core';
 import '@ionic/core/css/ionic.bundle.css';
 import '@ionic/core/css/palettes/dark.class.css';
