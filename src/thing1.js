@@ -399,7 +399,7 @@ async function compileTargets() {
     const compiler = new Compiler();
     
     // Compile with progress callback
-    await compiler.compileImageTargets(images, (progress) => {
+    const dataList = await compiler.compileImageTargets(images, (progress) => {
       // progress comes as 0-100, not 0-1
       const normalizedProgress = progress > 1 ? progress / 100 : progress;
       const percent = 40 + (normalizedProgress * 50);
@@ -410,8 +410,8 @@ async function compileTargets() {
     compileStatus.textContent = 'Exporting...';
     compileProgress.style.width = '95%';
     
-    // Export to buffer
-    const exportedBuffer = await compiler.exportData();
+    // Export to buffer (use the compiled dataList to avoid stale internal state)
+    const exportedBuffer = await compiler.exportData(dataList);
     console.log('Exported buffer size:', exportedBuffer?.byteLength || exportedBuffer?.length, 'bytes');
     
     // Upload to Firebase (Uint8Array is supported directly)
