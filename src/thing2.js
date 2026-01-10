@@ -156,8 +156,13 @@ async function initializeAR() {
   }
   
   // Update the mindar-image attribute with the targets URL
-  arSceneEl.setAttribute('mindar-image', `imageTargetSrc: ${mindBlobUrl}; autoStart: false; uiScanning: no; uiLoading: no;`);
-  console.log('Set mindar-image attribute');
+  arSceneEl.setAttribute('mindar-image', {
+    imageTargetSrc: mindBlobUrl,
+    autoStart: false,
+    uiScanning: 'no',
+    uiLoading: 'no',
+  });
+  console.log('Set mindar-image attribute (object form)');
   
   // Create video assets and target entities
   targets.forEach((target, index) => {
