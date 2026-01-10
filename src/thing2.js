@@ -135,11 +135,12 @@ async function initializeAR() {
     const originalFetch = window.fetch;
     window.fetch = async (...args) => {
       const res = await originalFetch(...args);
-      if (args[0] === mindBlobUrl) {
+      const url = args[0] instanceof Request ? args[0].url : args[0];
+      if (url && url.startsWith('blob:')) {
         try {
           const clone = res.clone();
           const buf = await clone.arrayBuffer();
-          console.log('MindAR fetch .mind size:', buf.byteLength, 'bytes');
+          console.log('MindAR fetch .mind size:', buf.byteLength, 'bytes', 'url:', url);
           return new Response(buf, { status: res.status, statusText: res.statusText, headers: res.headers });
         } catch (err) {
           console.warn('MindAR fetch intercept failed:', err);
