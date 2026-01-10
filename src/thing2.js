@@ -1,8 +1,4 @@
-// AR Viewer
-import { defineCustomElements } from '@ionic/core/loader/index.js';
-import { loadingController, alertController } from '@ionic/core';
-import '@ionic/core/css/ionic.bundle.css';
-import '@ionic/core/css/palettes/dark.class.css';
+// Thing2 - AR Viewer
 import { getProject, getTargets } from './firebase.js';
 
 // ============================================
@@ -14,21 +10,25 @@ let targets = [];
 let arScene = null;
 let arSystem = null;
 let videoElements = [];
-let loader = null;
 
 // ============================================
 // DOM Elements
 // ============================================
 
+const loadingScreen = document.getElementById('loading-screen');
+const loadingText = document.getElementById('loading-text');
+const errorScreen = document.getElementById('error-screen');
+const errorText = document.getElementById('error-text');
+const retryBtn = document.getElementById('retry-btn');
+const fabContainer = document.getElementById('fab-container');
+const fabMain = document.getElementById('fab-main');
+const fabPortfolio = document.getElementById('fab-portfolio');
+const fabLinkedin = document.getElementById('fab-linkedin');
+const fabInstagram = document.getElementById('fab-instagram');
 const arContainer = document.getElementById('ar-container');
 const arSceneEl = document.getElementById('ar-scene');
 const arAssets = document.getElementById('ar-assets');
 const arTargetsEl = document.getElementById('ar-targets');
-const fabContainer = document.getElementById('fab-container');
-const fabPortfolio = document.getElementById('fab-portfolio');
-const fabLinkedin = document.getElementById('fab-linkedin');
-const fabInstagram = document.getElementById('fab-instagram');
-const statusOverlay = document.getElementById('status-overlay');
 
 // ============================================
 // Initialize
@@ -45,35 +45,26 @@ async function init() {
       return;
     }
     
-    loader = await loadingController.create({
-      message: 'Loading project...',
-      spinner: 'crescent',
-      mode: 'ios',
-      cssClass: 'custom-loader'
-    });
-    await loader.present();
+    loadingText.textContent = 'Loading project...';
     
     // Load project data
     project = await getProject(projectId);
     
     if (!project) {
-      await loader.dismiss();
       showError('Project not found.');
       return;
     }
     
     if (!project.compiled || !project.mindUrl) {
-      await loader.dismiss();
-      showError('This project hasn\'t been set up yet. Ask the creator to compile it in AR Setup.');
+      showError('This project hasn\'t been set up yet. Ask the creator to compile it in Thing1.');
       return;
     }
     
     // Load targets
-    loader.message = 'Loading targets...';
+    loadingText.textContent = 'Loading targets...';
     targets = await getTargets(projectId);
     
     if (targets.length === 0) {
-      await loader.dismiss();
       showError('No posters have been added to this project yet.');
       return;
     }
@@ -82,12 +73,11 @@ async function init() {
     setupSocialLinks();
     
     // Initialize AR
-    loader.message = 'Setting up AR...';
+    loadingText.textContent = 'Setting up AR...';
     await initializeAR();
     
   } catch (error) {
     console.error('Initialization error:', error);
-    if (loader) await loader.dismiss();
     showError('Failed to load project. Please try again.');
   }
 }
@@ -234,7 +224,7 @@ async function initializeAR() {
   });
   
   // Wait for scene to be ready
-  if (loader) loader.message = 'Requesting camera access...';
+  loadingText.textContent = 'Requesting camera access...';
   
   console.log('Scene hasLoaded:', arSceneEl.hasLoaded);
   
@@ -257,14 +247,13 @@ async function initializeAR() {
       console.log('AR started successfully!');
       
       // Hide loading screen
-      if (loader) await loader.dismiss();
+      loadingScreen.classList.add('hidden');
       
       // Add scanning indicator
       addScanningIndicator();
       
     } catch (error) {
       console.error('AR start error:', error);
-      if (loader) await loader.dismiss();
       if (error.name === 'NotAllowedError') {
         showError('Camera access denied. Please allow camera access and refresh.');
       } else {
@@ -298,7 +287,7 @@ function addScanningIndicator() {
     <div class="scanning-dot"></div>
     <span>Scanning for posters...</span>
   `;
-  statusOverlay.appendChild(indicator);
+  document.body.appendChild(indicator);
 }
 
 function showTargetFound() {
@@ -314,7 +303,7 @@ function showTargetFound() {
     indicator = document.createElement('div');
     indicator.className = 'target-found';
     indicator.textContent = 'Poster detected!';
-    statusOverlay.appendChild(indicator);
+    document.body.appendChild(indicator);
   }
   indicator.classList.add('visible');
 }
@@ -332,35 +321,48 @@ function hideTargetFound() {
   }
 }
 
-async function showError(message) {
-  const alert = await alertController.create({
-    header: 'Error',
-    message: message,
-    mode: 'ios',
-    buttons: [
-      {
-        text: 'Retry',
-        handler: () => {
-          window.location.reload();
-        }
-      }
-    ]
-  });
-  await alert.present();
+function showError(message) {
+  loadingScreen.classList.add('hidden');
+  errorText.textContent = message;
+  errorScreen.classList.remove('hidden');
 }
 
 // ============================================
 // FAB Interaction
 // ============================================
 
-// FAB is handled by Ionic components now
-// Social links are updated in setupSocialLinks via href
+fabMain.addEventListener('click', () => {
+  fabContainer.classList.toggle('expanded');
+});
+
+// Close FAB when clicking outside
+document.addEventListener('click', (e) => {
+  if (!fabContainer.contains(e.target)) {
+    fabContainer.classList.remove('expanded');
+  }
+});
+
+// Close FAB when clicking a link
+[fabPortfolio, fabLinkedin, fabInstagram].forEach(link => {
+  link.addEventListener('click', () => {
+    setTimeout(() => {
+      fabContainer.classList.remove('expanded');
+    }, 100);
+  });
+});
+
+// ============================================
+// Retry Handler
+// ============================================
+
+retryBtn.addEventListener('click', () => {
+  window.location.reload();
+});
 
 // ============================================
 // Start
 // ============================================
 
-defineCustomElements();
 init();
 
 

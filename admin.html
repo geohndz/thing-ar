@@ -2,10 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0a0a0b" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>AR Setup - Admin Dashboard</title>
+    <title>Thing1 - Admin Dashboard</title>
+    
     
     <link rel="stylesheet" href="/src/styles/shared.css" />
     <link rel="stylesheet" href="/src/styles/thing1.css" />
@@ -20,125 +21,136 @@
       }
     </script>
   </head>
-  <body class="ion-padding-top">
-    <ion-app>
-      <ion-header mode="ios">
-        <ion-toolbar color="dark">
-          <ion-title>AR Setup Dashboard</ion-title>
-        </ion-toolbar>
-      </ion-header>
-
-      <ion-content color="dark">
-        <div class="admin-container">
-          <!-- Project Info Section -->
-          <ion-card mode="ios">
-            <ion-card-header>
-              <ion-card-title>Project Details</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-list mode="ios" lines="full">
-                <ion-item mode="ios">
-                  <ion-label position="stacked">Project Name</ion-label>
-                  <ion-input type="text" id="project-name" placeholder="My Art Show"></ion-input>
-                </ion-item>
-                
-                <ion-item mode="ios">
-                  <ion-label position="stacked">Portfolio URL</ion-label>
-                  <ion-input type="url" id="portfolio-url" placeholder="https://yourportfolio.com" value="https://geovanyhernandez.com/"></ion-input>
-                </ion-item>
-                
-                <ion-item mode="ios">
-                  <ion-label position="stacked">LinkedIn URL</ion-label>
-                  <ion-input type="url" id="linkedin-url" placeholder="https://linkedin.com/in/..." value="https://www.linkedin.com/in/geovany-hernandez-a517471ba/"></ion-input>
-                </ion-item>
-                
-                <ion-item mode="ios">
-                  <ion-label position="stacked">Instagram URL</ion-label>
-                  <ion-input type="url" id="instagram-url" placeholder="https://instagram.com/..." value="https://www.instagram.com/geo.dsgns/"></ion-input>
-                </ion-item>
-              </ion-list>
-            </ion-card-content>
-          </ion-card>
-
-          <!-- Posters Section -->
-          <ion-card mode="ios">
-            <ion-card-header>
-              <div class="section-header">
-                <ion-card-title>Posters & Videos</ion-card-title>
-                <ion-badge color="primary" id="poster-count">0 posters</ion-badge>
-              </div>
-            </ion-card-header>
-            <ion-card-content>
-              <p class="section-desc">Upload your poster images and their corresponding videos. The AR viewer will overlay videos on recognized posters.</p>
-              
-              <div id="posters-grid">
-                <!-- Poster cards will be dynamically added here -->
-                
-                <!-- Add Poster Button -->
-                <button id="add-poster-btn" class="poster-card poster-card-add">
-                  <div class="add-icon">
-                    <ion-icon name="add-outline" style="font-size: 24px;"></ion-icon>
-                  </div>
-                  <span>Add Poster</span>
-                </button>
-              </div>
-            </ion-card-content>
-          </ion-card>
-
-          <!-- Actions Section -->
-          <ion-card mode="ios">
-            <ion-card-content>
-              <div class="actions-row">
-                <div class="status-indicator">
-                  <span class="status-dot" id="status-dot"></span>
-                  <span id="status-text">Not compiled</span>
-                </div>
-                <div class="action-buttons">
-                  <ion-button id="compile-btn" color="medium" mode="ios">
-                    <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
-                    Compile Targets
-                  </ion-button>
-                  <ion-button id="save-btn" color="primary" mode="ios">
-                    <ion-icon slot="start" name="save-outline"></ion-icon>
-                    Save Project
-                  </ion-button>
-                </div>
-              </div>
-            </ion-card-content>
-          </ion-card>
-
-          <!-- Share Section -->
-          <ion-card mode="ios">
-            <ion-card-header>
-              <ion-card-title>Share Your AR Experience</ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-              <div class="share-content">
-                <div class="share-url-container">
-                  <ion-item mode="ios" style="flex: 1;" lines="none">
-                    <ion-input type="text" id="share-url" readonly placeholder="Save project to get share link"></ion-input>
-                  </ion-item>
-                  <ion-button id="copy-url-btn" fill="clear" mode="ios" title="Copy URL">
-                    <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
-                  </ion-button>
-                </div>
-                <ion-button id="preview-btn" color="secondary" mode="ios">
-                  <ion-icon slot="start" name="eye-outline"></ion-icon>
-                  Preview AR Viewer
-                </ion-button>
-              </div>
-            </ion-card-content>
-          </ion-card>
+  <body>
+    <div id="app">
+      <!-- Header -->
+      <header id="admin-header">
+        <div class="header-content">
+          <h1 class="logo">Thing1</h1>
+          <span class="tagline">Setup Dashboard</span>
         </div>
-      </ion-content>
+      </header>
+
+      <!-- Main Content -->
+      <main id="admin-main">
+        <!-- Project Info Section -->
+        <section class="card" id="project-section">
+          <h2>Project Details</h2>
+          <div class="form-group">
+            <label for="project-name">Project Name</label>
+            <input type="text" id="project-name" placeholder="My Art Show" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="portfolio-url">Portfolio URL</label>
+              <input type="url" id="portfolio-url" placeholder="https://yourportfolio.com" value="https://geovanyhernandez.com/" />
+            </div>
+            <div class="form-group">
+              <label for="linkedin-url">LinkedIn URL</label>
+              <input type="url" id="linkedin-url" placeholder="https://linkedin.com/in/..." value="https://www.linkedin.com/in/geovany-hernandez-a517471ba/" />
+            </div>
+            <div class="form-group">
+              <label for="instagram-url">Instagram URL</label>
+              <input type="url" id="instagram-url" placeholder="https://instagram.com/..." value="https://www.instagram.com/geo.dsgns/" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Posters Section -->
+        <section class="card" id="posters-section">
+          <div class="section-header">
+            <h2>Posters & Videos</h2>
+            <span class="badge" id="poster-count">0 posters</span>
+          </div>
+          <p class="section-desc">Upload your poster images and their corresponding videos. The AR viewer will overlay videos on recognized posters.</p>
+          
+          <div id="posters-grid">
+            <!-- Poster cards will be dynamically added here -->
+            
+            <!-- Add Poster Button -->
+            <button id="add-poster-btn" class="poster-card poster-card-add">
+              <div class="add-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                </svg>
+              </div>
+              <span>Add Poster</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Actions Section -->
+        <section class="card" id="actions-section">
+          <div class="actions-row">
+            <div class="status-indicator">
+              <span class="status-dot" id="status-dot"></span>
+              <span id="status-text">Not compiled</span>
+            </div>
+            <div class="action-buttons">
+              <button id="compile-btn" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.64-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                </svg>
+                Compile Targets
+              </button>
+              <button id="save-btn" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+                </svg>
+                Save Project
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Share Section -->
+        <section class="card" id="share-section">
+          <h2>Share Your AR Experience</h2>
+          <div class="share-content">
+            <div class="share-url-container">
+              <input type="text" id="share-url" readonly placeholder="Save project to get share link" />
+              <button id="copy-url-btn" class="btn btn-icon" title="Copy URL">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                </svg>
+              </button>
+            </div>
+            <button id="preview-btn" class="btn btn-secondary">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+              </svg>
+              Preview Thing2
+            </button>
+          </div>
+        </section>
+      </main>
 
       <!-- Hidden file inputs -->
       <input type="file" id="poster-input" accept="image/*" hidden />
       <input type="file" id="video-input" accept="video/mp4,video/webm" hidden />
 
-      <!-- Toast container is no longer needed as we'll use ion-toast controller -->
-    </ion-app>
+      <!-- Toast notifications -->
+      <div id="toast-container"></div>
+
+      <!-- Compilation Modal -->
+      <div id="compile-modal" class="modal hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>Compiling Targets</h3>
+          </div>
+          <div class="modal-body">
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" id="compile-progress"></div>
+              </div>
+              <p id="compile-status">Analyzing images...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/src/thing1.js"></script>
   </body>
 </html>
+

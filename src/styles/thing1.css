@@ -1,46 +1,87 @@
 /* ============================================
-   AR Setup - Admin Dashboard Styles
+   Thing1 - Admin Dashboard Styles
    ============================================ */
 
-.admin-container {
-  max-width: 800px;
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+#admin-header {
+  position: sticky;
+  top: 0;
+  background: rgba(10, 10, 11, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border-subtle);
+  z-index: var(--z-header);
+}
+
+#admin-header .header-content {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: var(--space-md);
-  padding-bottom: 100px; /* Space for FAB or footer */
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
 }
 
-ion-card {
-  margin-bottom: var(--space-md);
-  --background: var(--color-surface);
-  --color: var(--color-text-primary);
+#admin-header .logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--color-accent), #ff9966);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-ion-item {
-  --background: transparent;
-  --color: var(--color-text-primary);
-  --padding-start: 0;
+#admin-header .tagline {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* Main Content */
+#admin-main {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+/* Sections */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: var(--space-sm);
 }
 
-ion-label {
-  color: var(--color-text-secondary) !important;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-size: 0.75rem !important;
+.section-desc {
+  font-size: 0.875rem;
+  margin-bottom: var(--space-lg);
 }
 
-ion-input {
-  --padding-start: 0;
-  font-size: 0.9375rem;
+/* Form Layout */
+.form-group {
+  margin-bottom: var(--space-md);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
 }
 
 /* Posters Grid */
 #posters-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: var(--space-md);
-  margin-top: var(--space-md);
 }
 
 .poster-card {
@@ -241,28 +282,28 @@ ion-input {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 
 .status-indicator {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   font-size: 0.875rem;
   color: var(--color-text-secondary);
 }
 
 .status-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: var(--radius-full);
   background: var(--color-text-muted);
 }
 
 .status-dot.compiled {
   background: var(--color-success);
-  box-shadow: 0 0 12px var(--color-success);
+  box-shadow: 0 0 8px var(--color-success);
 }
 
 .status-dot.compiling {
@@ -277,74 +318,55 @@ ion-input {
 
 .action-buttons {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 /* Share Section */
 .share-content {
   display: flex;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   align-items: stretch;
   flex-wrap: wrap;
 }
 
 .share-url-container {
   flex: 1;
-  min-width: 300px;
+  min-width: 200px;
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .share-url-container input {
   flex: 1;
   font-family: var(--font-mono);
-  font-size: 0.875rem;
+  font-size: 0.75rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   #admin-main {
-    padding: var(--space-lg) var(--space-md);
-    gap: var(--space-xl);
+    padding: var(--space-md);
   }
   
   .card {
-    padding: var(--space-lg) var(--space-md);
+    padding: var(--space-md);
   }
   
   #posters-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: var(--space-md);
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
   
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: var(--space-md);
-  }
-
   .actions-row {
     flex-direction: column;
     align-items: stretch;
-    gap: var(--space-lg);
   }
   
   .action-buttons {
-    flex-direction: column;
-    width: 100%;
-    gap: var(--space-sm);
+    justify-content: stretch;
   }
   
   .action-buttons .btn {
-    width: 100%;
-  }
-
-  .share-content {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .share-url-container {
-    min-width: 0;
+    flex: 1;
   }
 }
 

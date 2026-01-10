@@ -1,5 +1,5 @@
 /* ============================================
-   AR Setup + AR Viewer Shared Styles
+   Thing1 + Thing2 Shared Styles
    ============================================ */
 
 /* CSS Reset & Base */
@@ -12,15 +12,6 @@
 }
 
 :root {
-  /* Ionic Variable Overrides for custom look */
-  --ion-font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --ion-color-primary: #ff6b35;
-  --ion-color-primary-rgb: 255, 107, 53;
-  --ion-color-primary-contrast: #ffffff;
-  --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #e05e2f;
-  --ion-color-primary-tint: #ff7a49;
-
   /* Color System - Dark, sophisticated palette */
   --color-bg: #0a0a0b;
   --color-surface: #141416;
@@ -48,13 +39,10 @@
   /* Spacing */
   --space-xs: 4px;
   --space-sm: 8px;
-  --space-ms: 12px;
   --space-md: 16px;
-  --space-ml: 20px;
   --space-lg: 24px;
   --space-xl: 32px;
   --space-2xl: 48px;
-  --space-3xl: 64px;
   
   /* Border Radius */
   --radius-sm: 6px;
@@ -129,10 +117,10 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: var(--space-ms) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
   font-family: var(--font-body);
-  font-size: 0.9375rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -210,11 +198,11 @@ input::placeholder {
 label {
   display: block;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: var(--space-sm);
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-xs);
 }
 
 /* Cards */

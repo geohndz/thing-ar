@@ -12,9 +12,7 @@
     "vite": "^7.2.4"
   },
   "dependencies": {
-    "@ionic/core": "^8.7.16",
     "firebase": "^12.7.0",
-    "ionicons": "^8.0.13",
     "mind-ar": "^1.2.5"
   },
   "overrides": {
