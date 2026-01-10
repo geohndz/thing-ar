@@ -130,6 +130,23 @@ async function initializeAR() {
     const mindBlob = new Blob([buffer], { type: 'application/octet-stream' });
     mindBlobUrl = URL.createObjectURL(mindBlob);
     console.log('Using blob URL for mind file');
+    
+    // Intercept fetch calls to the blob URL and log the size MindAR receives
+    const originalFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const res = await originalFetch(...args);
+      if (args[0] === mindBlobUrl) {
+        try {
+          const clone = res.clone();
+          const buf = await clone.arrayBuffer();
+          console.log('MindAR fetch .mind size:', buf.byteLength, 'bytes');
+          return new Response(buf, { status: res.status, statusText: res.statusText, headers: res.headers });
+        } catch (err) {
+          console.warn('MindAR fetch intercept failed:', err);
+        }
+      }
+      return res;
+    };
   } catch (e) {
     console.error('Failed to fetch .mind file:', e);
   }
