@@ -51,6 +51,7 @@ const previewBtn = document.getElementById('preview-btn');
 const compileModal = document.getElementById('compile-modal');
 const compileProgress = document.getElementById('compile-progress');
 const compileStatus = document.getElementById('compile-status');
+const compilePercent = document.getElementById('compile-percent');
 const toastContainer = document.getElementById('toast-container');
 
 // ============================================
@@ -384,16 +385,20 @@ async function compileTargets() {
     // Load all poster images from local files (no CORS issues!)
     const images = await Promise.all(
       targets.map(async (target, i) => {
-        compileStatus.textContent = `Loading image ${i + 1}/${targets.length}...`;
-        compileProgress.style.width = `${((i + 1) / targets.length) * 30}%`;
+        const status = `LOADING_IMG_${i + 1}/${targets.length}`;
+        compileStatus.textContent = status;
+        const progress = ((i + 1) / targets.length) * 30;
+        compileProgress.style.width = `${progress}%`;
+        if (compilePercent) compilePercent.textContent = `${Math.round(progress)}%`;
         
         const file = posterFiles.get(target.targetIndex);
         return createImageBitmap(file);
       })
     );
     
-    compileStatus.textContent = 'Compiling targets...';
+    compileStatus.textContent = 'COMPILING_DATA...';
     compileProgress.style.width = '40%';
+    if (compilePercent) compilePercent.textContent = '40%';
     
     // Use MindAR compiler
     const compiler = new Compiler();
@@ -404,18 +409,20 @@ async function compileTargets() {
       const normalizedProgress = progress > 1 ? progress / 100 : progress;
       const percent = 40 + (normalizedProgress * 50);
       compileProgress.style.width = `${Math.min(percent, 95)}%`;
-      compileStatus.textContent = `Compiling... ${Math.round(Math.min(progress, 100))}%`;
+      if (compilePercent) compilePercent.textContent = `${Math.round(Math.min(percent, 95))}%`;
+      compileStatus.textContent = `PROCESS_${Math.round(Math.min(progress, 100))}%`;
     });
     
-    compileStatus.textContent = 'Exporting...';
+    compileStatus.textContent = 'EXPORTING_BLOB...';
     compileProgress.style.width = '95%';
+    if (compilePercent) compilePercent.textContent = '95%';
     
     // Export to buffer (use the compiled dataList to avoid stale internal state)
     const exportedBuffer = await compiler.exportData(dataList);
     console.log('Exported buffer size:', exportedBuffer?.byteLength || exportedBuffer?.length, 'bytes');
     
     // Upload to Firebase (Uint8Array is supported directly)
-    compileStatus.textContent = 'Uploading...';
+    compileStatus.textContent = 'UPLOADING_SYSTEM...';
     const { url: mindUrl } = await uploadTargetsMind(currentProject.id, exportedBuffer);
     console.log('Uploaded to:', mindUrl);
     
@@ -430,12 +437,13 @@ async function compileTargets() {
     isCompiled = true;
     
     compileProgress.style.width = '100%';
-    compileStatus.textContent = 'Done!';
+    if (compilePercent) compilePercent.textContent = '100%';
+    compileStatus.textContent = 'COMPLETE';
     
     setTimeout(() => {
       compileModal.classList.add('hidden');
       updateUI();
-      showToast('Targets compiled successfully!', 'success');
+      showToast('SYSTEM_UPDATE_SUCCESS', 'success');
     }, 500);
     
   } catch (error) {
@@ -451,19 +459,19 @@ async function compileTargets() {
 
 function updateUI() {
   // Update poster count
-  posterCount.textContent = `${targets.length} poster${targets.length !== 1 ? 's' : ''}`;
+  posterCount.textContent = `${targets.length} UNIT${targets.length !== 1 ? 'S' : ''}`;
   
   // Update status
   if (isCompiled) {
     statusDot.classList.add('compiled');
     statusDot.classList.remove('compiling');
-    statusText.textContent = `Compiled (${targets.length} targets)`;
+    statusText.textContent = `STATE: READY (${targets.length} TARGETS)`;
   } else if (targets.length > 0) {
     statusDot.classList.remove('compiled', 'compiling');
-    statusText.textContent = 'Not compiled - changes pending';
+    statusText.textContent = 'STATE: PENDING_COMPILATION';
   } else {
     statusDot.classList.remove('compiled', 'compiling');
-    statusText.textContent = 'No posters added';
+    statusText.textContent = 'STATE: NO_DATA';
   }
   
   // Update share URL
