@@ -1,4 +1,4 @@
-// Thing2 - AR Viewer
+// AR Viewer
 import { defineCustomElements } from '@ionic/core/loader';
 import { loadingController, alertController } from '@ionic/core';
 import '@ionic/core/css/ionic.bundle.css';
@@ -64,7 +64,7 @@ async function init() {
     
     if (!project.compiled || !project.mindUrl) {
       await loader.dismiss();
-      showError('This project hasn\'t been set up yet. Ask the creator to compile it in Thing1.');
+      showError('This project hasn\'t been set up yet. Ask the creator to compile it in AR Setup.');
       return;
     }
     

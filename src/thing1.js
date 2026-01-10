@@ -1,4 +1,4 @@
-// Thing1 - Admin Dashboard
+// AR Setup - Admin Dashboard
 import { defineCustomElements } from '@ionic/core/loader';
 import { toastController, loadingController, alertController } from '@ionic/core';
 import '@ionic/core/css/ionic.bundle.css';

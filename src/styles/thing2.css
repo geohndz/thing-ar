@@ -1,5 +1,5 @@
 /* ============================================
-   Thing2 - AR Viewer Styles
+   AR Viewer Styles
    ============================================ */
 
 html, body {
@@ -37,9 +37,10 @@ body {
 
 /* FAB Container is now ion-fab */
 ion-fab-button {
-  --background: var(--color-accent);
-  --background-hover: var(--color-accent-hover);
+  --background: #000000;
+  --background-hover: #1c1c1f;
   --color: white;
+  border: 1px solid var(--color-border);
 }
 
 /* Scanning indicator */

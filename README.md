@@ -1,11 +1,11 @@
-# Thing1 + Thing2: AR Poster Scanner
+# AR Setup + AR Viewer: AR Poster Scanner
 
-An interactive AR experience for art shows. Visitors scan QR codes to access Thing2, point their phones at printed posters, and watch them come to life with video overlays.
+An interactive AR experience for art shows. Visitors scan QR codes to access AR Viewer, point their phones at printed posters, and watch them come to life with video overlays.
 
 ## Overview
 
-- **Thing1** (`/admin.html`) - Admin dashboard for uploading posters and videos
-- **Thing2** (`/index.html`) - AR viewer that visitors use at the show
+- **AR Setup** (`/admin.html`) - Admin dashboard for uploading posters and videos
+- **AR Viewer** (`/index.html`) - AR viewer that visitors use at the show
 
 ## Quick Start
 
@@ -63,12 +63,12 @@ npm install
 npm run dev
 ```
 
-- **Thing1 (Admin):** http://localhost:5173/admin.html
-- **Thing2 (Viewer):** http://localhost:5173/
+- **AR Setup (Admin):** http://localhost:5173/admin.html
+- **AR Viewer (Viewer):** http://localhost:5173/
 
 ## Usage
 
-### Setting Up Your AR Show (Thing1)
+### Setting Up Your AR Show (AR Setup)
 
 1. Open `/admin.html`
 2. Enter your project name and social links
@@ -78,7 +78,7 @@ npm run dev
 6. Click **Save Project**
 7. Copy the share URL and generate a QR code from it
 
-### Viewing AR (Thing2)
+### Viewing AR (AR Viewer)
 
 1. Scan the QR code or open the share URL
 2. Allow camera access
@@ -117,8 +117,8 @@ npm run dev
 
 ```
 ar-poster/
-├── index.html          # Thing2 - AR Viewer
-├── admin.html          # Thing1 - Admin Dashboard
+├── index.html          # AR Viewer
+├── admin.html          # AR Setup - Admin Dashboard
 ├── src/
 │   ├── thing1.js       # Admin dashboard logic
 │   ├── thing2.js       # AR viewer logic
