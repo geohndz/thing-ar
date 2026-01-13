@@ -380,6 +380,14 @@ function showTargetFound() {
     document.body.appendChild(indicator);
   }
   indicator.classList.add('visible');
+
+  // Auto-hide after 3 seconds
+  setTimeout(() => {
+    indicator.classList.remove('visible');
+    // Re-show scanning indicator if still present
+    const scanningAgain = document.querySelector('.scanning-indicator');
+    if (scanningAgain) scanningAgain.classList.add('visible');
+  }, 3000);
 }
 
 function hideTargetFound() {
