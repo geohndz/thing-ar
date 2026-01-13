@@ -15,26 +15,58 @@ let videoElements = [];
 // DOM Elements
 // ============================================
 
-const loadingScreen = document.getElementById('loading-screen');
-const loadingText = document.getElementById('loading-text');
-const errorScreen = document.getElementById('error-screen');
-const errorText = document.getElementById('error-text');
-const retryBtn = document.getElementById('retry-btn');
-const fabContainer = document.getElementById('fab-container');
-const fabMain = document.getElementById('fab-main');
-const fabPortfolio = document.getElementById('fab-portfolio');
-const fabLinkedin = document.getElementById('fab-linkedin');
-const fabInstagram = document.getElementById('fab-instagram');
-const arContainer = document.getElementById('ar-container');
-const arSceneEl = document.getElementById('ar-scene');
-const arAssets = document.getElementById('ar-assets');
-const arTargetsEl = document.getElementById('ar-targets');
+let loadingScreen = document.getElementById('loading-screen');
+let loadingText = document.getElementById('loading-text');
+let errorScreen = document.getElementById('error-screen');
+let errorText = document.getElementById('error-text');
+let retryBtn = document.getElementById('retry-btn');
+let fabContainer = document.getElementById('fab-container');
+let fabMain = document.getElementById('fab-main');
+let fabPortfolio = document.getElementById('fab-portfolio');
+let fabLinkedin = document.getElementById('fab-linkedin');
+let fabInstagram = document.getElementById('fab-instagram');
+let arContainer = document.getElementById('ar-container');
+let arSceneEl = document.getElementById('ar-scene');
+let arAssets = document.getElementById('ar-assets');
+let arTargetsEl = document.getElementById('ar-targets');
 
 // ============================================
 // Initialize
 // ============================================
 
 function ensureDom() {
+  // Build fallback loading/error UI if missing (Ionic layout)
+  if (loadingScreen && !loadingText) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;';
+    const txt = document.createElement('div');
+    txt.id = 'loading-text';
+    txt.style.cssText = 'color:white;background:rgba(0,0,0,0.5);padding:12px 16px;border-radius:8px;font-size:16px;';
+    txt.textContent = 'Loading...';
+    wrap.appendChild(txt);
+    loadingScreen.appendChild(wrap);
+  }
+  if (errorScreen && (!errorText || !retryBtn)) {
+    const wrap = document.createElement('div');
+    wrap.style.cssText = 'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,0.4);';
+    const txt = document.createElement('div');
+    txt.id = 'error-text';
+    txt.style.cssText = 'color:white;background:rgba(0,0,0,0.7);padding:12px 16px;border-radius:8px;font-size:16px;';
+    txt.textContent = 'Something went wrong';
+    const btn = document.createElement('button');
+    btn.id = 'retry-btn';
+    btn.textContent = 'Try Again';
+    btn.style.cssText = 'padding:10px 16px;border:none;border-radius:8px;background:#4c6fff;color:white;font-weight:600;cursor:pointer;';
+    wrap.appendChild(txt);
+    wrap.appendChild(btn);
+    errorScreen.appendChild(wrap);
+  }
+
+  // Re-grab after potential creation
+  loadingText = document.getElementById('loading-text');
+  errorText = document.getElementById('error-text');
+  retryBtn = document.getElementById('retry-btn');
+
   const required = {
     loadingScreen,
     loadingText,
