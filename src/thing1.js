@@ -161,7 +161,7 @@ async function handlePosterUpload(event) {
   
   try {
     console.log('Starting upload...');
-    showToast('Uploading poster...', 'info');
+    showToast('Uploading screen...', 'info');
     
     // Store file locally for compilation
     posterFiles.set(targetIndex, file);
@@ -201,10 +201,10 @@ async function handlePosterUpload(event) {
     await updateProject(currentProject.id, { compiled: false });
     
     updateUI();
-    showToast('Poster added!', 'success');
+    showToast('Screen added!', 'success');
   } catch (error) {
     console.error('Error uploading poster:', error);
-    showToast('Failed to upload poster', 'error');
+    showToast('Failed to upload screen', 'error');
   }
   
   // Reset input
@@ -265,7 +265,7 @@ async function removePoster(targetIndex) {
   const target = targets.find(t => t.targetIndex === targetIndex);
   if (!target) return;
   
-  if (!confirm('Delete this poster and its video?')) return;
+  if (!confirm('Delete this screen and its video?')) return;
   
   try {
     // Delete files from storage
@@ -300,10 +300,10 @@ async function removePoster(targetIndex) {
     await updateProject(currentProject.id, { compiled: false });
     
     updateUI();
-    showToast('Poster removed', 'success');
+    showToast('Screen removed', 'success');
   } catch (error) {
     console.error('Error removing poster:', error);
-    showToast('Failed to remove poster', 'error');
+    showToast('Failed to remove screen', 'error');
   }
 }
 
@@ -364,14 +364,14 @@ async function saveProject() {
 
 async function compileTargets() {
   if (targets.length === 0) {
-    showToast('Add at least one poster first', 'error');
+    showToast('Add at least one screen first', 'error');
     return;
   }
   
   // Check if we have all poster files locally
   const missingFiles = targets.filter(t => !posterFiles.has(t.targetIndex));
   if (missingFiles.length > 0) {
-    showToast(`Please re-upload ${missingFiles.length} poster(s) to compile. Local files were cleared on page reload.`, 'error');
+    showToast(`Please re-upload ${missingFiles.length} screen(s) to compile. Local files were cleared on page reload.`, 'error');
     return;
   }
   
@@ -451,7 +451,7 @@ async function compileTargets() {
 
 function updateUI() {
   // Update poster count
-  posterCount.textContent = `${targets.length} poster${targets.length !== 1 ? 's' : ''}`;
+  posterCount.textContent = `${targets.length} screen${targets.length !== 1 ? 's' : ''}`;
   
   // Update status
   if (isCompiled) {
@@ -463,7 +463,7 @@ function updateUI() {
     statusText.textContent = 'Not compiled - changes pending';
   } else {
     statusDot.classList.remove('compiled', 'compiling');
-    statusText.textContent = 'No posters added';
+    statusText.textContent = 'No screens added';
   }
   
   // Update share URL
@@ -506,17 +506,17 @@ function createPosterCard(target) {
   
   card.innerHTML = `
     <div class="poster-preview">
-      <img src="${imageUrl}" alt="Poster ${target.targetIndex + 1}" />
+      <img src="${imageUrl}" alt="Screen ${target.targetIndex + 1}" />
       <span class="poster-index">${target.targetIndex + 1}</span>
       ${!hasLocalFile ? '<span class="poster-warning" title="Re-upload to compile">⚠️</span>' : ''}
-      <button class="poster-delete" title="Delete poster">
+      <button class="poster-delete" title="Delete screen">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
         </svg>
       </button>
     </div>
     <div class="poster-info">
-      <div class="poster-name">${target.posterFilename || 'Poster'}</div>
+      <div class="poster-name">${target.posterFilename || 'Screen'}</div>
       <div class="poster-video-status ${hasVideo ? 'has-video' : 'no-video'}">
         ${hasVideo ? `
           <svg viewBox="0 0 24 24" fill="currentColor">

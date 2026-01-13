@@ -10,6 +10,7 @@ let targets = [];
 let arScene = null;
 let arSystem = null;
 let videoElements = [];
+let foundTargets = new Set();
 
 // ============================================
 // DOM Elements
@@ -123,7 +124,7 @@ async function init() {
     targets = await getTargets(projectId);
     
     if (targets.length === 0) {
-      showError('No posters have been added to this project yet.');
+      showError('No screens have been added to this project yet.');
       return;
     }
     
@@ -280,19 +281,25 @@ async function initializeAR() {
   AFRAME.registerComponent('video-handler', {
     init: function() {
       const video = this.el.components.material?.material?.map?.image;
+      const targetEntity = this.el.parentEl;
       
-      this.el.parentEl.addEventListener('targetFound', () => {
+      // Get target index from the parent entity's mindar-image-target component
+      // The attribute is "targetIndex: 0"
+      const targetAttr = targetEntity.getAttribute('mindar-image-target');
+      const targetIndex = targetAttr ? targetAttr.split(':')[1]?.trim() : null;
+      
+      targetEntity.addEventListener('targetFound', () => {
         if (video) {
           video.play().catch(e => console.log('Video autoplay prevented:', e));
         }
-        showTargetFound();
+        showTargetFound(targetIndex);
       });
       
-      this.el.parentEl.addEventListener('targetLost', () => {
+      targetEntity.addEventListener('targetLost', () => {
         if (video) {
           video.pause();
         }
-        hideTargetFound();
+        hideTargetFound(targetIndex);
       });
     }
   });
@@ -359,13 +366,17 @@ function addScanningIndicator() {
   indicator.className = 'scanning-indicator visible';
   indicator.innerHTML = `
     <div class="scanning-dot"></div>
-    <span>Scanning for posters...</span>
+    <span>Scanning for screens...</span>
   `;
   document.body.appendChild(indicator);
 }
 
-function showTargetFound() {
-  // Remove scanning indicator temporarily
+function showTargetFound(index) {
+  if (index !== null) {
+    foundTargets.add(index);
+  }
+
+  // Remove scanning indicator
   const scanningIndicator = document.querySelector('.scanning-indicator');
   if (scanningIndicator) {
     scanningIndicator.classList.remove('visible');
@@ -376,30 +387,40 @@ function showTargetFound() {
   if (!indicator) {
     indicator = document.createElement('div');
     indicator.className = 'target-found';
-    indicator.textContent = 'Poster detected!';
+    indicator.textContent = 'Screen detected!';
     document.body.appendChild(indicator);
   }
   indicator.classList.add('visible');
 
-  // Auto-hide after 3 seconds
+  // Auto-hide the "Screen detected!" message after 3 seconds,
+  // but DON'T show the scanning indicator if targets are still found
   setTimeout(() => {
     indicator.classList.remove('visible');
-    // Re-show scanning indicator if still present
-    const scanningAgain = document.querySelector('.scanning-indicator');
-    if (scanningAgain) scanningAgain.classList.add('visible');
+    
+    // Only re-show scanning indicator if NO targets are currently found
+    if (foundTargets.size === 0) {
+      const scanningAgain = document.querySelector('.scanning-indicator');
+      if (scanningAgain) scanningAgain.classList.add('visible');
+    }
   }, 3000);
 }
 
-function hideTargetFound() {
+function hideTargetFound(index) {
+  if (index !== null) {
+    foundTargets.delete(index);
+  }
+
   const indicator = document.querySelector('.target-found');
   if (indicator) {
     indicator.classList.remove('visible');
   }
   
-  // Show scanning indicator again
-  const scanningIndicator = document.querySelector('.scanning-indicator');
-  if (scanningIndicator) {
-    scanningIndicator.classList.add('visible');
+  // Only show scanning indicator again if NO targets are currently found
+  if (foundTargets.size === 0) {
+    const scanningIndicator = document.querySelector('.scanning-indicator');
+    if (scanningIndicator) {
+      scanningIndicator.classList.add('visible');
+    }
   }
 }
 
