@@ -88,8 +88,8 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 56px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+  height: 64px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
   z-index: var(--z-header);
   pointer-events: none;
 }
@@ -99,20 +99,14 @@ body {
   padding: 0 var(--space-md);
   display: flex;
   align-items: center;
-  gap: var(--space-md);
 }
 
-#app-header .logo {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-#app-header .tagline {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.7);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+#app-header .header-logo svg {
+  width: 56px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.35));
+  opacity: 0.9;
 }
 
 /* AR Container */
@@ -141,15 +135,7 @@ body {
   z-index: var(--z-fab);
 }
 
-#logo-badge {
-  position: fixed;
-  top: var(--space-md);
-  left: var(--space-md);
-  width: 72px;
-  z-index: var(--z-header);
-  opacity: 0.9;
-  pointer-events: none;
-}
+/* logo-badge removed; logo lives in header */
 
 /* FAB Options */
 .fab-options {
@@ -163,12 +149,12 @@ body {
 .fab-option {
   width: 48px;
   height: 48px;
-  background: var(--color-surface);
+  background: #fff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-primary);
+  color: #111;
   box-shadow: var(--shadow-lg);
   opacity: 0;
   transform: scale(0.5) translateY(20px);
@@ -179,11 +165,12 @@ body {
 .fab-option svg {
   width: 22px;
   height: 22px;
+  color: #111;
 }
 
 .fab-option:hover {
-  background: var(--color-accent);
-  color: white;
+  background: #f2f2f2;
+  color: #000;
   transform: scale(1.1) translateY(0);
 }
 
@@ -223,20 +210,21 @@ body {
 .fab-button {
   width: 56px;
   height: 56px;
-  background: var(--color-accent);
+  background: #fff;
   border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: var(--shadow-lg), var(--shadow-glow);
+  box-shadow: var(--shadow-lg);
   transition: all var(--transition-fast);
   position: relative;
+  color: #111;
 }
 
 .fab-button:hover {
-  background: var(--color-accent-hover);
+  background: #f2f2f2;
   transform: scale(1.05);
 }
 
@@ -247,7 +235,7 @@ body {
 .fab-button svg {
   width: 24px;
   height: 24px;
-  color: white;
+  color: #111;
   position: absolute;
   transition: all var(--transition-fast);
 }
