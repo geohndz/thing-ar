@@ -141,6 +141,16 @@ body {
   z-index: var(--z-fab);
 }
 
+#logo-badge {
+  position: fixed;
+  top: var(--space-md);
+  left: var(--space-md);
+  width: 72px;
+  z-index: var(--z-header);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
 /* FAB Options */
 .fab-options {
   display: flex;
