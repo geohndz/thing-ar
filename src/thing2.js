@@ -331,33 +331,42 @@ function showError(message) {
 // FAB Interaction
 // ============================================
 
-fabMain.addEventListener('click', () => {
-  fabContainer.classList.toggle('expanded');
-});
+if (fabMain && fabContainer) {
+  fabMain.addEventListener('click', () => {
+    fabContainer.classList.toggle('expanded');
+  });
+}
 
 // Close FAB when clicking outside
-document.addEventListener('click', (e) => {
-  if (!fabContainer.contains(e.target)) {
-    fabContainer.classList.remove('expanded');
-  }
-});
+if (fabContainer) {
+  document.addEventListener('click', (e) => {
+    if (!fabContainer.contains(e.target)) {
+      fabContainer.classList.remove('expanded');
+    }
+  });
+}
 
 // Close FAB when clicking a link
-[fabPortfolio, fabLinkedin, fabInstagram].forEach(link => {
-  link.addEventListener('click', () => {
-    setTimeout(() => {
-      fabContainer.classList.remove('expanded');
-    }, 100);
+if (fabContainer) {
+  [fabPortfolio, fabLinkedin, fabInstagram].forEach(link => {
+    if (!link) return;
+    link.addEventListener('click', () => {
+      setTimeout(() => {
+        fabContainer.classList.remove('expanded');
+      }, 100);
+    });
   });
-});
+}
 
 // ============================================
 // Retry Handler
 // ============================================
 
-retryBtn.addEventListener('click', () => {
-  window.location.reload();
-});
+if (retryBtn) {
+  retryBtn.addEventListener('click', () => {
+    window.location.reload();
+  });
+}
 
 // ============================================
 // Start
