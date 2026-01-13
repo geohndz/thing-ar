@@ -96,13 +96,13 @@ body {
 
 #app-header .header-content {
   height: 100%;
-  padding: 0 var(--space-md);
+  padding: 10px var(--space-md) 0;
   display: flex;
   align-items: center;
 }
 
 #app-header .header-logo svg {
-  width: 56px;
+  width: 44px;
   height: auto;
   display: block;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.35));
@@ -144,6 +144,7 @@ body {
   gap: var(--space-md);
   margin-bottom: var(--space-md);
   pointer-events: none;
+  align-items: center;
 }
 
 .fab-option {
