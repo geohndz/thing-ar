@@ -150,15 +150,15 @@ body {
 .fab-option {
   width: 48px;
   height: 48px;
-  background: #fff;
+  background: #111;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #111;
+  color: #fff;
   box-shadow: var(--shadow-lg);
   opacity: 0;
-  transform: scale(0.5) translateY(20px);
+  transform: scale(0.7) translateY(48px);
   transition: all var(--transition-normal) cubic-bezier(0.68, -0.55, 0.265, 1.55);
   pointer-events: none;
 }
@@ -166,13 +166,13 @@ body {
 .fab-option svg {
   width: 22px;
   height: 22px;
-  color: #111;
+  color: #fff;
 }
 
 .fab-option:hover {
-  background: #f2f2f2;
-  color: #000;
-  transform: scale(1.1) translateY(0);
+  background: #222;
+  color: #fff;
+  transform: scale(1.05) translateY(0);
 }
 
 /* FAB expanded state */
