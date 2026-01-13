@@ -89,20 +89,20 @@ body {
   left: 0;
   right: 0;
   height: 64px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+  background: transparent;
   z-index: var(--z-header);
   pointer-events: none;
 }
 
 #app-header .header-content {
   height: 100%;
-  padding: 10px var(--space-md) 0;
+  padding: 12px var(--space-md) 0;
   display: flex;
   align-items: center;
 }
 
 #app-header .header-logo svg {
-  width: 44px;
+  width: 36px;
   height: auto;
   display: block;
   filter: drop-shadow(0 4px 12px rgba(0,0,0,0.35));
