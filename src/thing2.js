@@ -34,7 +34,33 @@ const arTargetsEl = document.getElementById('ar-targets');
 // Initialize
 // ============================================
 
+function ensureDom() {
+  const required = {
+    loadingScreen,
+    loadingText,
+    errorScreen,
+    errorText,
+    retryBtn,
+    fabContainer,
+    fabMain,
+    fabPortfolio,
+    fabLinkedin,
+    fabInstagram,
+    arContainer,
+    arSceneEl,
+    arAssets,
+    arTargetsEl,
+  };
+  const missing = Object.entries(required).filter(([, el]) => !el).map(([k]) => k);
+  if (missing.length) {
+    console.error('Missing DOM elements:', missing);
+    return false;
+  }
+  return true;
+}
+
 async function init() {
+  if (!ensureDom()) return;
   try {
     // Get project ID from URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -45,7 +71,7 @@ async function init() {
       return;
     }
     
-    loadingText.textContent = 'Loading project...';
+    if (loadingText) loadingText.textContent = 'Loading project...';
     
     // Load project data
     project = await getProject(projectId);
@@ -61,7 +87,7 @@ async function init() {
     }
     
     // Load targets
-    loadingText.textContent = 'Loading targets...';
+    if (loadingText) loadingText.textContent = 'Loading targets...';
     targets = await getTargets(projectId);
     
     if (targets.length === 0) {
@@ -73,7 +99,7 @@ async function init() {
     setupSocialLinks();
     
     // Initialize AR
-    loadingText.textContent = 'Setting up AR...';
+    if (loadingText) loadingText.textContent = 'Setting up AR...';
     await initializeAR();
     
   } catch (error) {
@@ -247,7 +273,7 @@ async function initializeAR() {
       console.log('AR started successfully!');
       
       // Hide loading screen
-      loadingScreen.classList.add('hidden');
+    if (loadingScreen) loadingScreen.classList.add('hidden');
       
       // Add scanning indicator
       addScanningIndicator();
@@ -322,9 +348,9 @@ function hideTargetFound() {
 }
 
 function showError(message) {
-  loadingScreen.classList.add('hidden');
-  errorText.textContent = message;
-  errorScreen.classList.remove('hidden');
+  if (loadingScreen) loadingScreen.classList.add('hidden');
+  if (errorText) errorText.textContent = message;
+  if (errorScreen) errorScreen.classList.remove('hidden');
 }
 
 // ============================================
