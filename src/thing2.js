@@ -246,14 +246,30 @@ async function initializeAR() {
       const targetEntity = document.createElement('a-entity');
       targetEntity.setAttribute('mindar-image-target', `targetIndex: ${index}`);
       
-      // Create video plane
-      // Aspect ratio will be determined by the video, defaulting to 16:9
+      // Create video plane (we'll set aspect ratio once metadata is available)
       const videoPlane = document.createElement('a-video');
       videoPlane.setAttribute('src', `#video-${index}`);
       videoPlane.setAttribute('position', '0 0 0');
       videoPlane.setAttribute('width', '1');
-      videoPlane.setAttribute('height', '1.78'); // Approximate phone screen ratio
+      videoPlane.setAttribute('height', '1'); // temporary until aspect is known
+      videoPlane.setAttribute('material', 'shader: flat; side: double; src: ' + `#video-${index}`);
       videoPlane.setAttribute('video-handler', '');
+      
+      // Set proper aspect ratio when video metadata is loaded
+      const setAspect = () => {
+        const vw = video.videoWidth;
+        const vh = video.videoHeight;
+        if (vw && vh) {
+          const aspect = vw / vh;
+          const width = 1;
+          const height = 1 / aspect;
+          videoPlane.setAttribute('width', width);
+          videoPlane.setAttribute('height', height);
+        }
+      };
+      video.addEventListener('loadedmetadata', setAspect);
+      // If already loaded
+      setAspect();
       
       targetEntity.appendChild(videoPlane);
       arTargetsEl.appendChild(targetEntity);
