@@ -1,6 +1,8 @@
-# AR Setup + AR Viewer: AR Poster Scanner
+# Thing AR — interactive AR posters
 
-An interactive AR experience for art shows. Visitors scan QR codes to access AR Viewer, point their phones at printed posters, and watch them come to life with video overlays.
+Interactive AR posters for art shows. Visitors scan a QR code, point their phone at a print, and watch video overlays come to life.
+
+Live: [thing-ar.vercel.app](https://thing-ar.vercel.app)
 
 ## Overview
 
@@ -139,4 +141,3 @@ MIT
 ---
 
 Built with ❤️ for interactive art experiences
-
